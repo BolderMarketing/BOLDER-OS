@@ -1,8 +1,13 @@
 # Render blueprint — one-click hosted BOLDER OS.
 # In the Render dashboard: New > Blueprint > connect this repo > pick the branch.
 # Runs in DEMO MODE (no database needed) so the live URL works immediately.
-# To switch to a real Supabase DB later: flip DEMO_MODE to false and add
-# SUPABASE_URL + SUPABASE_SERVICE_KEY in the service's Environment tab.
+#
+# To switch to your real Supabase DB, in the service's Environment tab:
+#   1. Set DEMO_MODE = false
+#   2. Add SUPABASE_URL and SUPABASE_SERVICE_KEY (from Supabase > Settings > API)
+#   3. Add ADMIN_EMAIL and ADMIN_PASSWORD — on the next deploy the app creates
+#      your login and seeds your clients automatically (only on an empty DB).
+# (Make sure you've run supabase/schema.sql in the Supabase SQL editor first.)
 services:
   - type: web
     name: bolder-os

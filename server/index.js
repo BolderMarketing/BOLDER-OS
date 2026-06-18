@@ -18,6 +18,7 @@ import approvalRoutes from './routes/approvals.js';
 import monthlyRoutes from './routes/monthly.js';
 import aceRoutes from './routes/ace.js';
 import twilioWebhook from './routes/webhooks/twilio.js';
+import { ensureBootstrap } from './lib/bootstrap.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -76,14 +77,21 @@ app.use((err, req, res, next) => {
   res.status(status).json({ error: err.publicMessage || (status >= 500 ? 'Server error' : err.message) });
 });
 
-app.listen(env.PORT, () => {
+app.listen(env.PORT, async () => {
   console.log(`BOLDER OS API running on :${env.PORT} (${env.NODE_ENV})`);
   if (isDemo) {
     console.log('────────────────────────────────────────────');
     console.log(' DEMO MODE — in-memory data, no database needed');
     console.log(' Login:  faris@bolder.biz  /  bolder');
-    console.log(' (set SUPABASE_URL + SUPABASE_SERVICE_KEY to use the real DB)');
+    console.log(' (set SUPABASE creds + DEMO_MODE=false to use the real DB)');
     console.log('────────────────────────────────────────────');
+  } else {
+    // Real database: create the admin login + seed clients on first boot.
+    try {
+      await ensureBootstrap();
+    } catch (e) {
+      console.error('[bootstrap] error:', e.message);
+    }
   }
 });
 
