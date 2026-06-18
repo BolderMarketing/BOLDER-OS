@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth.jsx';
+import { api } from '../../utils/api.js';
 import Logo from '../Logo.jsx';
 
 export default function Login() {
@@ -8,6 +9,11 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [demo, setDemo] = useState(false);
+
+  useEffect(() => {
+    api.get('/health').then((h) => setDemo(!!h.demo)).catch(() => {});
+  }, []);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -51,6 +57,11 @@ export default function Login() {
           {busy ? 'Signing in…' : 'Enter BOLDER OS'}
         </button>
         {error && <div className="login-error">{error}</div>}
+        {demo && (
+          <div className="muted" style={{ marginTop: 16, fontSize: 12, textAlign: 'center' }}>
+            Demo mode · login <strong style={{ color: 'var(--text)' }}>faris@bolder.biz</strong> / <strong style={{ color: 'var(--text)' }}>bolder</strong>
+          </div>
+        )}
       </form>
     </div>
   );

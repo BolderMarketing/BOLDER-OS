@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { env, isProd, allowedOrigins } from './lib/env.js';
+import { env, isProd, isDemo, allowedOrigins } from './lib/env.js';
 import { requireAuth, requireAdmin } from './middleware/auth.js';
 import { apiLimiter } from './middleware/rateLimit.js';
 
@@ -38,7 +38,7 @@ app.use(
 app.use(cookieParser());
 
 // Health check (open).
-app.get('/api/health', (req, res) => res.json({ ok: true, service: 'bolder-os', env: env.NODE_ENV }));
+app.get('/api/health', (req, res) => res.json({ ok: true, service: 'bolder-os', env: env.NODE_ENV, demo: isDemo }));
 
 // --- Twilio webhook: urlencoded body, NO JWT (signature-gated), mounted first ---
 app.use('/api/webhooks/twilio', express.urlencoded({ extended: false }), twilioWebhook);
@@ -78,6 +78,13 @@ app.use((err, req, res, next) => {
 
 app.listen(env.PORT, () => {
   console.log(`BOLDER OS API running on :${env.PORT} (${env.NODE_ENV})`);
+  if (isDemo) {
+    console.log('────────────────────────────────────────────');
+    console.log(' DEMO MODE — in-memory data, no database needed');
+    console.log(' Login:  faris@bolder.biz  /  bolder');
+    console.log(' (set SUPABASE_URL + SUPABASE_SERVICE_KEY to use the real DB)');
+    console.log('────────────────────────────────────────────');
+  }
 });
 
 export default app;
