@@ -1,0 +1,21 @@
+{
+  "name": "bolder-os",
+  "version": "1.0.0",
+  "description": "BOLDER OS — private internal operating system for BOLDER Marketing. Phase 1: Project Manager terminal.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "install:all": "npm install && npm --prefix server install && npm --prefix client install",
+    "dev": "concurrently -n server,client -c blue,magenta \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
+    "build": "npm --prefix client install && npm --prefix client run build",
+    "start": "npm --prefix server install && npm --prefix server start",
+    "server": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
