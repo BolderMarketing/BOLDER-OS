@@ -14,7 +14,9 @@ services:
     runtime: node
     plan: free
     branch: claude/exciting-hawking-qveric
-    buildCommand: npm run install:all && npm run build
+    # Client build tooling (vite) lives in devDependencies; NODE_ENV=production
+    # makes npm skip those, so force them in for the client build with --include=dev.
+    buildCommand: npm install && npm --prefix server install && npm --prefix client install --include=dev && npm --prefix client run build
     startCommand: npm run start
     autoDeploy: true
     envVars:
