@@ -23,15 +23,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 app.set('trust proxy', 1); // Replit sits behind a proxy (needed for rate-limit IPs + secure cookies)
 
-// --- CORS: locked to the configured client origin(s), credentials on ---
+// --- CORS: allow same-origin (Express serves the app in prod) + allow-listed
+// client origins, credentials on. Cross-origin callers not on the list are blocked.
 app.use(
-  cors({
-    origin(origin, cb) {
-      // Allow same-origin / server-to-server (no Origin header) and allow-listed origins.
-      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-      return cb(new Error('Not allowed by CORS'));
-    },
-    credentials: true,
+  cors((req, cb) => {
+    const origin = req.header('Origin');
+    const self = `${req.protocol}://${req.get('host')}`;
+    // No Origin = server-to-server; same-origin = the deployed app itself.
+    const allowed = !origin || origin === self || allowedOrigins.includes(origin);
+    cb(null, { origin: allowed, credentials: true });
   })
 );
 

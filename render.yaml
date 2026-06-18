@@ -1,0 +1,21 @@
+# Render blueprint — one-click hosted BOLDER OS.
+# In the Render dashboard: New > Blueprint > connect this repo > pick the branch.
+# Runs in DEMO MODE (no database needed) so the live URL works immediately.
+# To switch to a real Supabase DB later: flip DEMO_MODE to false and add
+# SUPABASE_URL + SUPABASE_SERVICE_KEY in the service's Environment tab.
+services:
+  - type: web
+    name: bolder-os
+    runtime: node
+    plan: free
+    branch: claude/exciting-hawking-qveric
+    buildCommand: npm run install:all && npm run build
+    startCommand: npm run start
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DEMO_MODE
+        value: "true"
+      - key: JWT_SECRET
+        generateValue: true
